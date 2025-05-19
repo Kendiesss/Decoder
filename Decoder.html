@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>JCM Key Byte Decoder</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    textarea, input { width: 100%; margin: 10px 0; padding: 8px; font-family: monospace; }
+    .output { margin-top: 20px; background: #f5f5f5; padding: 10px; border-radius: 5px; }
+  </style>
+</head>
+<body>
+  <h2>JCM Key Byte to Human-Readable Error</h2>
+
+  <label for="keyBytes">Enter Key Bytes (space-separated hex, e.g., "06 00 05 00"):</label>
+  <input type="text" id="keyBytes" placeholder="Enter hex bytes...">
+
+  <button onclick="decode()">Decode</button>
+
+  <div class="output" id="output"></div>
+
+  <script>
+    const statusMap = {
+      "06 00": "Transport Unit Jammed",
+      "05 00": "Stacker Full",
+      "02 00": "Bill Jam in Acceptor",
+      "36 00": "Waiting for Bill",
+      "00 00": "No Error"
+    };
+
+    function decode() {
+      const input = document.getElementById("keyBytes").value.trim().toUpperCase();
+      const bytes = input.split(/\s+/);
+      let result = '';
+
+      for (let i = 0; i < bytes.length; i += 2) {
+        const pair = bytes[i] + ' ' + (bytes[i + 1] || '00');
+        if (statusMap[pair]) {
+          result += `Byte ${i}-${i+1} [${pair}]: ${statusMap[pair]}<br>`;
+        } else {
+          result += `Byte ${i}-${i+1} [${pair}]: Unknown or Unmapped Code<br>`;
+        }
+      }
+
+      document.getElementById("output").innerHTML = result || "No input provided.";
+    }
+  </script>
+</body>
+</html>
